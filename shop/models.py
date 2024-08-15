@@ -31,7 +31,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
     category = models.ForeignKey(Category, related_name="products", on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='products/')
+    image = models.ImageField(upload_to='media/products/')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -58,7 +58,7 @@ class Product(models.Model):
     def get_display_price(self):
         """Возвращает строку для отображения цены, учитывая скидку."""
         if self.discount_price:
-            return f'{self.discount_price} (Скидка!)'
+            return f'{self.discount_price} <s>{self.price}</s>'
         return f'{self.price}'
 
 

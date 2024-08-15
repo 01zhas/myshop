@@ -1,0 +1,37 @@
+{% extends 'shop/base.html'%}
+
+
+{% block title %}
+Каталог товаров
+{% endblock%}
+
+{% block content %}
+<h1>Каталог товаров</h1>
+<div>
+    <h4>Категории</h4>
+    <ul>
+        <a href="{% url 'product_list' %}">
+            Все товары
+        </a>
+        {% for category in categories %}
+            <li>
+                <a href="{% url 'product_list_by_category' category.slug %}">
+                    {{ category.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div>
+    {% for product in products %}
+        <div>
+            <h3 >{{ product.name }}</h3>
+            <img src="{{ product.image.url }}" style="max-width: 100px;" >
+            <p>Цена {{ product.get_display_price|safe  }} тенге</p>
+            <a href="{% url 'product_detail' product.slug %}">Подробнее</a>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock%}

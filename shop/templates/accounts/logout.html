@@ -1,0 +1,11 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Выход
+{% endblock %}
+
+{% block content %}
+<h2>Выход</h2>
+<p>Вы успешно вышли из аккаунта.</p>
+<a href="{% url 'product_list' %}">Вернуться к каталогу</a>
+{% endblock %}

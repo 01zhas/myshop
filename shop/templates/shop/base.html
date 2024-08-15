@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Магазин{% endblock%}</title>
+</head>
+<body>
+    <header>
+        <h1>
+            Мой магазин
+        </h1>
+    </header>
+    <nav>
+        <a href="{% url 'product_list' %}"> Каталог</a> <br>
+        {% if user.is_authenticated %}
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Выйти</button>
+        </form>
+        {% else %}
+        <a href="{% url 'signup' %}"> Зарегистрироваться</a> <br>
+        <a href="{% url 'login' %}"> Войти</a>
+        {% endif %}
+    </nav>
+
+    <div class = 'container'>
+        {% block content %}
+        {% endblock%}
+    </div>
+
+</body>
+</html>
