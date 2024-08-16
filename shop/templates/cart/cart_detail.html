@@ -1,0 +1,32 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+Корзина
+{% endblock%}
+
+{% block content %}
+<h2>{{ cart }}</h2>
+{% if cart.cart_item.exists %}
+    <ul>
+        {% for item in cart.cart_item.all %}
+            <li>
+                <a href="{% url 'product_detail' item.product.slug %}">{{item.product.name}} </a>({{ item.quantity }} - {{ item.get_total_item_price }})
+                <form action="{% url 'cart_add' item.product.slug %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">+</button>
+                </form>
+                <form action="{% url 'cart_remove' item.product.slug %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">-</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <p>
+        Итоговая цена {{ cart.get_discounted_price }}
+    </p>
+
+    <a href="{% url 'order_create' %}"> Оформить заказ</a>
+{% endif %}
+{% endblock%}

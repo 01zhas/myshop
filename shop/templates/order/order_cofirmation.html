@@ -1,0 +1,21 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Подтверждение заказа
+{% endblock %}
+
+{% block content %}
+<h1>Спасибо за ваш заказ!</h1>
+<p>Ваш заказ был успешно оформлен. Номер вашего заказа: {{ order.id }}</p>
+<p>Адрес доставки: {{ order.address }}</p>
+<p>Общая стоимость: {{ order.total_price }}</p>
+
+<h2>Детали заказа</h2>
+<ul>
+    {% for item in order.items.all %}
+        <li>{{ item.quantity }} x {{ item.product.name }} - {{ item.price }}</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'product_list' %}">Вернуться к покупкам</a>
+{% endblock %}

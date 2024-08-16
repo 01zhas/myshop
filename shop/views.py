@@ -1,12 +1,47 @@
 from typing import Any
 from django.db.models.query import QuerySet
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from .models import Category, Product
-from django.views.generic import ListView, DetailView, FormView
-from .forms import UserRegistrationForm
+from .models import CartItem, Category, Order, OrderItem, Product, Cart
+from django.views.generic import ListView, DetailView, FormView, TemplateView
+from .forms import OrderForm, UserRegistrationForm
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+
+
+class CartDetailView(TemplateView, LoginRequiredMixin):
+    template_name = 'cart/cart_detail.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart = get_object_or_404(Cart, user = self.request.user)
+        context['cart'] = cart
+        return context
+
+class AddToCartView(View, LoginRequiredMixin):
+    def post(self, request, *args, **kwargs):
+        product = get_object_or_404(Product, slug = self.kwargs['slug'])
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        if not created:
+            cart_item.quantity += 1
+        cart_item.save()
+        return redirect('cart')
+
+class RemoveToCartView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        cart = get_object_or_404(Cart, user=self.request.user)
+        product = get_object_or_404(Product, slug=self.kwargs['slug'])
+        cart_item = get_object_or_404(CartItem, cart=cart, product=product)
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            cart_item.save()  # Сохраните изменения в базе данных
+        else:
+            cart_item.delete()
+        return redirect('cart')
+
 
 class CustomLoginView(LoginView):
     template_name = 'accounts/login.html'
@@ -54,3 +89,42 @@ class ProductDetailView(DetailView):
 
     def get_queryset(self):
         return Product.objects.filter(slug=self.kwargs['slug'])
+    
+
+class OrderCreateView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        cart = get_object_or_404(Cart, user = self.request.user)
+        if not cart.cart_item.exists():
+            return redirect("product_list")
+
+        form = OrderForm
+        return render(request, 'order/order_create.html', {'form' : form, 'cart' : cart})
+
+    def post(self, request, *args, **kwargs):
+        cart = get_object_or_404(Cart, user = self.request.user)
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.user = request.user
+            order.total_price = cart.get_total_price()
+            order.save()
+
+            for item in cart.cart_item.all():
+                OrderItem.objects.create(
+                    order = order,
+                    product = item.product,
+                    quantity = item.quantity
+                )
+
+            cart.cart_item.all().delete()
+
+            return redirect('order_cofirmation', order_id = order.id)
+        return redirect(request, 'order/order_create.html', {'form' : form, 'cart' : cart})
+    
+class OrderConfirmationView(LoginRequiredMixin, DetailView):
+    model = Order
+    template_name = 'order/order_cofirmation.html'
+    context_object_name = 'order'
+
+    def get_object(self):
+        return get_object_or_404(Order, id=self.kwargs['order_id'], user=self.request.user)
