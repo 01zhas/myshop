@@ -1,5 +1,6 @@
 from typing import Any
 from django.db.models.query import QuerySet
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from .models import CartItem, Category, Order, OrderItem, Product, Cart, АvailabilityAlert
@@ -9,13 +10,26 @@ from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from django import template
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.models import User
 
-register = template.Library() 
+class ManagerMixin(LoginRequiredMixin, UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.groups.filter(name="Менеджеры").exists()
 
-@register.filter(name='has_group') 
-def has_group(user, group_name):
-    return user.groups.filter(name=group_name).exists()
+class ManagerDashboardView(ManagerMixin, TemplateView):
+    template_name = 'manager/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['users_count'] = len(User.objects.all())
+        return context
+
+class ManagerOrdersdView(ManagerMixin, TemplateView):
+    template_name = 'manager/orders.html'
+
+class ManagerProductsView(ManagerMixin, TemplateView):
+    template_name = 'manager/products.html'  
 
 class CartDetailView(TemplateView, LoginRequiredMixin):
     template_name = 'cart/cart_detail.html'

@@ -1,0 +1,32 @@
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Магазин{% endblock%}</title>
+</head>
+<header>
+    <h1>
+        Панель менеджера {{ user.username }}
+    </h1>
+</header>
+<nav>
+    <a href="{% url 'manager_products' %}"> Товары</a> <br>
+    <a href="{% url 'manager_orders' %}"> Заказы</a> <br>
+    <a href="{% url 'manager_dashboard' %}"> Статистика сайта</a> <br>
+    <a href="{% url 'product_list' %}"> Вернуться на сайт</a> <br>
+    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">Выйти</button>
+    </form>
+</nav>
+
+<body>
+    <div class = 'container'>
+        {% block content %}
+        {% endblock%}
+    </div>
+</body>
+</html>
