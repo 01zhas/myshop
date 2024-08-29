@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from .models import CartItem, Category, Order, OrderItem, Product, Cart, АvailabilityAlert
-from django.views.generic import ListView, DetailView, FormView, TemplateView
+from django.views.generic import ListView, DetailView, FormView, TemplateView, UpdateView
 from .forms import OrderForm, UserRegistrationForm
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
@@ -23,10 +23,22 @@ class ManagerDashboardView(ManagerMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['users_count'] = len(User.objects.all())
+        context['total_revenue'] = Order.objects.get_revenue()
+        context['total_sold'] = OrderItem.objects.get_count_products_sold()
+
+
         return context
 
-class ManagerOrdersdView(ManagerMixin, TemplateView):
+class ManagerOrdersView(ManagerMixin, ListView):
+    model = Order
     template_name = 'manager/orders.html'
+    context_object_name = 'orders'
+    ordering = ['-created_at']
+
+class ManagerOrdersUpdateView(ManagerMixin, UpdateView):
+    model = Order
+    template_name = 'manager/orders.html'
+    success_url = 'manager/orders/'
 
 class ManagerProductsView(ManagerMixin, TemplateView):
     template_name = 'manager/products.html'  

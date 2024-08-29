@@ -102,6 +102,9 @@ class CartItem(models.Model):
         """Возвращает общую стоимость текущего элемента корзины."""
         return self.quantity * self.product.get_discounted_price()
 
+class OrderManager(models.Manager):
+    def get_revenue(self):
+        return self.all().aggregate(revenue=models.Sum('total_price'))['revenue']
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -119,6 +122,8 @@ class Order(models.Model):
     payment_status = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = OrderManager()
+
     class Meta:
         verbose_name = "Заказ"
         verbose_name_plural = "Заказы"
@@ -133,13 +138,18 @@ class Order(models.Model):
     def get_status_display(self):
         """Возвращает статус заказа для отображения."""
         return dict(Order.STATUS_CHOICES).get(self.status, 'Неизвестно')
+    
 
+class OrderItemManager(models.Manager):
+    def get_count_products_sold(self):
+        return self.all().aggregate(total_sold=models.Sum('quantity'))['total_sold']
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
+    objects = OrderItemManager()
     class Meta:
         verbose_name = "Запись заказов"
         verbose_name_plural = "Записи заказов"
