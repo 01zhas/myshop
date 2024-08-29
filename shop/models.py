@@ -33,6 +33,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, related_name="products", on_delete=models.CASCADE)
     image = models.ImageField(upload_to='media/products/')
     created_at = models.DateTimeField(auto_now_add=True)
+    quantity = models.PositiveIntegerField(default=0, blank=True)
 
     class Meta:
         verbose_name = "Товар"
@@ -178,3 +179,14 @@ class GroupDiscount(models.Model):
 
     def __str__(self):
         return f'{self.group.name}: {self.discount}%'
+    
+class АvailabilityAlert(models.Model):
+    user = models.ForeignKey(User, related_name='alert', on_delete = models.CASCADE, null=True)
+    product = models.ForeignKey(Product, related_name='alert', on_delete = models.CASCADE,  null=True)
+
+    class Meta:
+        verbose_name = "Оповещение"
+        verbose_name_plural = "Оповещения"
+
+    def __str__(self):
+        return f'{self.user} {self.product}'

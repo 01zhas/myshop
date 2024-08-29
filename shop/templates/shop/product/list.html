@@ -30,10 +30,20 @@
             <img src="{{ product.image.url }}" style="max-width: 100px;" >
             <p>Цена {{ product.get_display_price|safe  }} тенге</p>
             {% if user.is_authenticated %}
+            {% if product.quantity == 0 %}
+            <p>Нету в наличии</p>
+            <form action="{% url 'make_alert' product.slug %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Сообщить о наличии</button> <br>
+            </form>
+            {% else %}
+            <p>{{ product.quantity }} товаров в наличии</p>
             <form action="{% url 'cart_add' product.slug %}" method="post">
                 {% csrf_token %}
-                <button type="submit">Добавить в корзину</button>
+                <button type="submit">Добавить в корзину</button> <br>
             </form>
+            {% endif %}
+            
             {% endif %}
             <a href="{% url 'product_detail' product.slug %}">Подробнее</a>
         </div>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import OrderConfirmationView, ProductListView, ProductDetailView, SignUp, CustomLoginView, CustomLogoutView, CartDetailView, AddToCartView, RemoveToCartView, OrderCreateView
+from .views import OrderConfirmationView, ProductListView, ProductDetailView, SignUp, CustomLoginView, CustomLogoutView, CartDetailView, AddToCartView, RemoveToCartView, OrderCreateView, AddAlertView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -19,6 +19,9 @@ urlpatterns = [
 
     path('order/create/', OrderCreateView.as_view(), name='order_create'),
     path('order/confirmation/<int:order_id>/', OrderConfirmationView.as_view(), name='order_cofirmation'),
+
+    path('alert/add/<slug:slug>', AddAlertView.as_view(), name='make_alert'),
+
 ]
 
 if settings.DEBUG:

@@ -2,14 +2,20 @@ from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from .models import CartItem, Category, Order, OrderItem, Product, Cart
+from .models import CartItem, Category, Order, OrderItem, Product, Cart, АvailabilityAlert
 from django.views.generic import ListView, DetailView, FormView, TemplateView
 from .forms import OrderForm, UserRegistrationForm
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
+from django import template
 
+register = template.Library() 
+
+@register.filter(name='has_group') 
+def has_group(user, group_name):
+    return user.groups.filter(name=group_name).exists()
 
 class CartDetailView(TemplateView, LoginRequiredMixin):
     template_name = 'cart/cart_detail.html'
@@ -26,7 +32,8 @@ class AddToCartView(View, LoginRequiredMixin):
         cart, created = Cart.objects.get_or_create(user=request.user)
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
         if not created:
-            cart_item.quantity += 1
+            if product.quantity > (cart_item.quantity):
+                cart_item.quantity += 1
         cart_item.save()
         return redirect('cart')
 
@@ -78,10 +85,11 @@ class ProductListView(ListView):
         context = super().get_context_data(**kwargs)
         context["categories"] = Category.objects.all()
         context["category"] = None
+        context["is_manager"] = self.request.user.groups.filter(name='Менеджеры').exists()
         if 'category_slug' in self.kwargs:
             context["category"] = get_object_or_404(Category, slug = self.kwargs['category_slug'])
         return context
-    
+
 class ProductDetailView(DetailView):
     model = Product
     template_name = "shop/product/product_detail.html"
@@ -90,6 +98,7 @@ class ProductDetailView(DetailView):
     def get_queryset(self):
         return Product.objects.filter(slug=self.kwargs['slug'])
     
+
 
 class OrderCreateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -110,11 +119,15 @@ class OrderCreateView(LoginRequiredMixin, View):
             order.save()
 
             for item in cart.cart_item.all():
+                item.product.quantity = item.product.quantity - item.quantity
+                item.product.save()
+
                 OrderItem.objects.create(
                     order = order,
                     product = item.product,
                     quantity = item.quantity
                 )
+
 
             cart.cart_item.all().delete()
 
@@ -128,3 +141,9 @@ class OrderConfirmationView(LoginRequiredMixin, DetailView):
 
     def get_object(self):
         return get_object_or_404(Order, id=self.kwargs['order_id'], user=self.request.user)
+    
+class AddAlertView(View):
+    def post(self, request, *args, **kwargs):
+        product = get_object_or_404(Product, slug = self.kwargs['slug'])
+        АvailabilityAlert.objects.get_or_create(user = request.user, product = product)
+        return redirect('product_list')

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Cart, CartItem, Order, OrderItem, PromoCode, GroupDiscount
+from .models import Category, Product, Cart, CartItem, Order, OrderItem, PromoCode, GroupDiscount, АvailabilityAlert
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent')
@@ -44,3 +44,4 @@ admin.site.register(Cart, CartAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(PromoCode, PromoCodeAdmin)
 admin.site.register(GroupDiscount, GroupDiscountAdmin)
+admin.site.register(АvailabilityAlert)

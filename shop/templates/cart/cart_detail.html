@@ -11,9 +11,16 @@
         {% for item in cart.cart_item.all %}
             <li>
                 <a href="{% url 'product_detail' item.product.slug %}">{{item.product.name}} </a>({{ item.quantity }} - {{ item.get_total_item_price }})
+                
+                
                 <form action="{% url 'cart_add' item.product.slug %}" method="post" style="display: inline;">
                     {% csrf_token %}
+                    {% if item.product.quantity > item.quantity %}
                     <button type="submit">+</button>
+                    {% else %}
+                    Нет товара
+                    <button type="submit" disabled>+</button>
+                    {% endif %}
                 </form>
                 <form action="{% url 'cart_remove' item.product.slug %}" method="post" style="display: inline;">
                     {% csrf_token %}
