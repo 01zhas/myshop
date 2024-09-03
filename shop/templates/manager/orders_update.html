@@ -1,0 +1,20 @@
+{% extends "manager/base.html" %}
+
+{% block title %}
+Заказ
+{% endblock %}
+
+{% block content %}
+
+<h1>Заказ {{ object.id }}</h1>
+
+<p>Клиент: {{ order.user.username }}</p>
+<p>Итоговая сумма:{{ order.total_price }}<b>тенге</b></p>
+<p>Дата оформления:{{ order.created_at }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+</form>
+{% endblock %}

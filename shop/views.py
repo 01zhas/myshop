@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from .models import CartItem, Category, Order, OrderItem, Product, Cart, АvailabilityAlert
-from django.views.generic import ListView, DetailView, FormView, TemplateView, UpdateView
+from django.views.generic import ListView, DetailView, FormView, TemplateView, UpdateView, CreateView
 from .forms import OrderForm, UserRegistrationForm
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
@@ -35,13 +35,32 @@ class ManagerOrdersView(ManagerMixin, ListView):
     context_object_name = 'orders'
     ordering = ['-created_at']
 
+class ManagerProductsView(ManagerMixin, ListView):
+    model = Product
+    template_name = 'manager/products.html'
+    context_object_name = 'products'
+    ordering = ['-created_at']
+
+class ManagerProductsUpdateView(ManagerMixin, UpdateView):
+    model = Product
+    template_name = 'manager/product_update.html'
+    context_object_name = 'product'
+    ordering = ['-created_at']
+    fields = ['description', 'price', 'discount_price', 'category', 'image', 'quantity']
+    success_url = reverse_lazy('manager_products')
+
+class ManagerProductsAddView(ManagerMixin, CreateView):
+    model = Product
+    template_name = 'manager/product.html'
+    context_object_name = 'product'
+    ordering = ['-created_at']
+
 class ManagerOrdersUpdateView(ManagerMixin, UpdateView):
     model = Order
-    template_name = 'manager/orders.html'
-    success_url = 'manager/orders/'
+    template_name = 'manager/orders_update.html'
+    fields = ['status', 'payment_status', 'address']
+    success_url = reverse_lazy('manager_orders')
 
-class ManagerProductsView(ManagerMixin, TemplateView):
-    template_name = 'manager/products.html'  
 
 class CartDetailView(TemplateView, LoginRequiredMixin):
     template_name = 'cart/cart_detail.html'

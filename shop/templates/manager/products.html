@@ -5,5 +5,43 @@
 {% endblock %}
 
 {% block content %}
-Товары
+Товары <br>
+<table>
+
+<tr>
+    <th>
+        Id
+    </th>
+    <th>
+        Название товара
+    </th>
+    <th>
+        Цена
+    </th>
+    <th>
+        Цена со скидкой
+    </th>
+    <th>
+        Категория
+    </th>
+    <th>
+        Дата создания
+    </th>
+    <th>
+        Количество
+    </th>
+</tr>
+{% for product in products %}
+<tr>
+    <td><a href="{% url 'update_product' product.slug %}">{{ product.pk }}</a></td>
+    <td>{{ product.name }}</td>
+    <td>{{ product.price }}</td>
+    <td>{{ product.discount_price }}</td>
+    <td>{{ product.category }}</td>
+    <td>{{ product.created_at }}</td>
+    <td>{{ product.quantity }}</td>
+
+</tr>
+{% endfor %}
+</table>
 {% endblock %}

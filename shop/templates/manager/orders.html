@@ -33,7 +33,7 @@
 </tr>
 {% for order in orders %}
 <tr>
-    <td><a href="">{{ order.pk }}</a></td>
+    <td><a href="{% url 'update_order' order.pk %}">{{ order.pk }}</a></td>
     <td>{{ order.user.username }}</td>
     <td>{{ order.total_price }}</td>
     <td>{{ order.address }}</td>
