@@ -29,7 +29,7 @@ urlpatterns = [
 
     path('manager/products/', ManagerProductsView.as_view(), name='manager_products'),
     path('manager/product/<slug:slug>', ManagerProductsUpdateView.as_view(), name='update_product'),
-    # path('manager/product/add', ManagerProductsAddView.as_view(), name='add_product'),
+    path('manager/product/add/', ManagerProductsAddView.as_view(), name='add_product'),
 ]
 
 if settings.DEBUG:

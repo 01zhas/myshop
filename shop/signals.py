@@ -12,10 +12,14 @@ def create_user_cart(sender, instance, created, **kwargs):
 
 @receiver(pre_save, sender=Product)
 def availability_alert(sender, instance, **kwargs):
-    prod = sender.objects.filter(name = instance.name)[0]
-    if prod.quantity == 0 and prod.quantity < instance.quantity:
-        alerts = АvailabilityAlert.objects.filter(product = instance)
-        for alert in alerts:
-            print(alert)
-            alert.delete()
+    
+    queryset = sender.objects.filter(name = instance.name)
+
+    if queryset.exists():
+        prod = queryset[0]
+        if prod.quantity == 0 and prod.quantity < instance.quantity:
+            alerts = АvailabilityAlert.objects.filter(product = instance)
+            for alert in alerts:
+                print(alert)
+                alert.delete()
             

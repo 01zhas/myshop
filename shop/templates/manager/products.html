@@ -7,7 +7,7 @@
 {% block content %}
 Товары <br>
 <table>
-
+<a href="{% url 'add_product' %}">Добавить новый товар</a>
 <tr>
     <th>
         Id
@@ -25,6 +25,9 @@
         Категория
     </th>
     <th>
+        Фото
+    </th>
+    <th>
         Дата создания
     </th>
     <th>
@@ -38,6 +41,9 @@
     <td>{{ product.price }}</td>
     <td>{{ product.discount_price }}</td>
     <td>{{ product.category }}</td>
+    <td>
+        <a href="{{ product.image.url }}">Ссылка на фото</a>
+    </td>
     <td>{{ product.created_at }}</td>
     <td>{{ product.quantity }}</td>
 

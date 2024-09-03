@@ -51,9 +51,13 @@ class ManagerProductsUpdateView(ManagerMixin, UpdateView):
 
 class ManagerProductsAddView(ManagerMixin, CreateView):
     model = Product
-    template_name = 'manager/product.html'
-    context_object_name = 'product'
-    ordering = ['-created_at']
+    template_name = 'manager/product_add.html'
+    fields = ['name', 'description', 'price', 'discount_price', 'category', 'image', 'quantity']
+    success_url = reverse_lazy('manager_products')
+
+    def form_valid(self, form):
+        print("Форма валидна")
+        return super().form_valid(form)
 
 class ManagerOrdersUpdateView(ManagerMixin, UpdateView):
     model = Order
