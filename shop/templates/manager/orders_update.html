@@ -1,20 +1,38 @@
 {% extends "manager/base.html" %}
 
 {% block title %}
-Заказ
+    Заказ {{ object.id }}
 {% endblock %}
 
 {% block content %}
+<div class="container mt-5">
 
-<h1>Заказ {{ object.id }}</h1>
+    <div class="mb-4 col-8 mx-auto">
+    <h1 class="text-center mb-4">Заказ №{{ object.id }}</h1>
 
-<p>Клиент: {{ order.user.username }}</p>
-<p>Итоговая сумма:{{ order.total_price }}<b>тенге</b></p>
-<p>Дата оформления:{{ order.created_at }}</p>
+    <ul class="list-group mb-4">
+        {% for item in order.items.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'product_detail' item.product.slug %}" class="text-dark">{{ item.product.name }}</a>
+                <span class="text-muted">{{ item.quantity }} x {{ item.product.get_display_price | safe}} тенге</span>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Сохранить</button>
-</form>
+                <span class="text-muted">{{ item.get_total_item_price}} тенге</span>
+            </li>
+        {% endfor %}
+    </ul>
+
+
+        <p><strong>Клиент:</strong> {{ order.user.username }}</p>
+        <p><strong>Итоговая сумма:</strong> {{ order.total_price }} <b>тенге</b></p>
+        <p><strong>Дата оформления:</strong> {{ order.created_at|date:"d M Y, H:i" }}</p>
+    
+    <form method="post" style="max-width: 400px;">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Сохранить</button>
+    </form>
+    </div>
+</div>
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import ManagerProductsAddView, ManagerProductsUpdateView, OrderConfirmationView, ProductListView, ProductDetailView, SignUp, CustomLoginView, CustomLogoutView, CartDetailView, AddToCartView, RemoveToCartView, OrderCreateView, AddAlertView, ManagerDashboardView, ManagerOrdersView, ManagerProductsView, ManagerOrdersUpdateView
+from .views import ManagerProductsAddView, ManagerProductsUpdateView, OrderConfirmationView, ProductListView, ProductDetailView, SignUp, CustomLoginView, CustomLogoutView, CartDetailView, AddToCartView, RemoveToCartView, OrderCreateView, AddAlertView, ManagerDashboardView, ManagerOrdersView, ManagerProductsView, ManagerOrdersUpdateView, ManagerProductsDeleteView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -30,6 +30,8 @@ urlpatterns = [
     path('manager/products/', ManagerProductsView.as_view(), name='manager_products'),
     path('manager/product/<slug:slug>', ManagerProductsUpdateView.as_view(), name='update_product'),
     path('manager/product/add/', ManagerProductsAddView.as_view(), name='add_product'),
+    path('manager/product/delete/<slug:slug>', ManagerProductsDeleteView.as_view(), name='delete_product'),
+
 ]
 
 if settings.DEBUG:

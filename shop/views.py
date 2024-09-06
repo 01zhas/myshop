@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from .models import CartItem, Category, Order, OrderItem, Product, Cart, АvailabilityAlert
-from django.views.generic import ListView, DetailView, FormView, TemplateView, UpdateView, CreateView
+from django.views.generic import ListView, DetailView, FormView, TemplateView, UpdateView, CreateView, DeleteView
 from .forms import OrderForm, UserRegistrationForm
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
@@ -47,6 +47,11 @@ class ManagerProductsUpdateView(ManagerMixin, UpdateView):
     context_object_name = 'product'
     ordering = ['-created_at']
     fields = ['description', 'price', 'discount_price', 'category', 'image', 'quantity']
+    success_url = reverse_lazy('manager_products')
+
+class ManagerProductsDeleteView(ManagerMixin, DeleteView):
+    template_name = 'manager/product_confirm_delete.html'
+    model = Product
     success_url = reverse_lazy('manager_products')
 
 class ManagerProductsAddView(ManagerMixin, CreateView):
