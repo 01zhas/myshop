@@ -12,6 +12,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+
+def gmail_mail(request):
+    return HttpResponse("Вы отправили email")
+
 
 class ManagerMixin(LoginRequiredMixin, UserPassesTestMixin):
     def test_func(self):
@@ -119,7 +124,14 @@ class SignUp(FormView):
 
     def form_valid(self, form):
         user = form.save()
-        login(self.request, user)
+        send_mail(
+            "Добро пожаловать в магазин ItStepShop",
+            "Держи промокод NEWUSER",
+            "olzhas2201@gmail.com",
+            [user.email],
+            fail_silently=False,
+        )
+        login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
         return super().form_valid(form)
 
 class ProductListView(ListView):
