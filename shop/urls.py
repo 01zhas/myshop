@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import ManagerProductsAddView, ManagerProductsUpdateView, OrderConfirmationView, ProductListView, ProductDetailView, SignUp, CustomLoginView, CustomLogoutView, CartDetailView, AddToCartView, RemoveToCartView, OrderCreateView, AddAlertView, ManagerDashboardView, ManagerOrdersView, ManagerProductsView, ManagerOrdersUpdateView, ManagerProductsDeleteView
+from .views import ManagerProductsAddView, ManagerProductsUpdateView, OrderConfirmationView, PaymentView, ProductListView, ProductDetailView, SignUp, CustomLoginView, CustomLogoutView, CartDetailView, AddToCartView, RemoveToCartView, OrderCreateView, AddAlertView, ManagerDashboardView, ManagerOrdersView, ManagerProductsView, ManagerOrdersUpdateView, ManagerProductsDeleteView
 from .views import gmail_mail
 from django.conf import settings
 from django.conf.urls.static import static
@@ -33,7 +33,7 @@ urlpatterns = [
     path('manager/product/add/', ManagerProductsAddView.as_view(), name='add_product'),
     path('manager/product/delete/<slug:slug>', ManagerProductsDeleteView.as_view(), name='delete_product'),
 
-    path('email', gmail_mail, name = 'email')
+    path('payment/<int:order_id>', PaymentView.as_view(), name = 'payment')
 ]
 
 if settings.DEBUG:

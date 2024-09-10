@@ -17,3 +17,8 @@ class OrderForm(forms.ModelForm):
         labels = {
             'address': 'Адрес доставки'
         }
+
+class PaymentForm(forms.Form):
+    card_number = forms.CharField(label = "Номер карты", max_length=16, widget=forms.TextInput(attrs={"class": "form-control", "placeHolder" : "Введите номер карты"}))
+    cvc = forms.CharField(label = "CVС", max_length=3, widget=forms.TextInput(attrs={"class": "form-control", "placeHolder" : "Введите три цифры на обороте карты"}))
+    expired_date = forms.CharField(label = "Дата истечения карты", max_length=4, widget=forms.TextInput(attrs={"class": "form-control", "placeHolder" : "Введите дату истечения карты"}))

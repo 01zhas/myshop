@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from .models import CartItem, Category, Order, OrderItem, Product, Cart, АvailabilityAlert
 from django.views.generic import ListView, DetailView, FormView, TemplateView, UpdateView, CreateView, DeleteView
-from .forms import OrderForm, UserRegistrationForm
+from .forms import OrderForm, UserRegistrationForm, PaymentForm
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,6 +13,9 @@ from django.views import View
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+
+from .fake_payment_system import FakePaymentSystem
+from .payment_gateaway import PaymentSystem
 
 def gmail_mail(request):
     return HttpResponse("Вы отправили email")
@@ -197,7 +200,7 @@ class OrderCreateView(LoginRequiredMixin, View):
 
             cart.cart_item.all().delete()
 
-            return redirect('order_cofirmation', order_id = order.id)
+            return redirect('payment', order_id = order.id)
         return redirect(request, 'order/order_create.html', {'form' : form, 'cart' : cart})
     
 class OrderConfirmationView(LoginRequiredMixin, DetailView):
@@ -213,3 +216,41 @@ class AddAlertView(View):
         product = get_object_or_404(Product, slug = self.kwargs['slug'])
         АvailabilityAlert.objects.get_or_create(user = request.user, product = product)
         return redirect('product_list')
+
+
+class PaymentView(LoginRequiredMixin, FormView):
+    template_name = "payments/payment_form.html"
+    form_class = PaymentForm
+    success_url = reverse_lazy('payment')
+
+    payment_system : PaymentSystem = FakePaymentSystem()
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        
+        order_id = self.kwargs.get("order_id")
+        order = get_object_or_404(Order, id = order_id, user = self.request.user)
+
+        context['order'] = order
+        context['total_price'] = order.total_price
+
+        return context
+
+    def form_valid(self, form):
+        card_number = form.cleaned_data['card_number']
+        cvc = form.cleaned_data['cvc']
+        expired_date = form.cleaned_data['expired_date']
+
+        order_id = self.kwargs.get("order_id")
+        order = get_object_or_404(Order, id = order_id, user = self.request.user)
+        total_price = order.total_price
+
+        result = self.payment_system.create_payment(total_price, card_number=card_number, cvc=cvc, expired_date=expired_date)
+
+        if result['status'] == 'success':
+            order.payment_status = True
+            order.save()
+            return redirect('order_confirmation', order_id= order.id)
+
+        context = self.get_context_data(result = result)
+        return self.render_to_response(context)
