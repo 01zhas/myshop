@@ -19,10 +19,10 @@ urlpatterns = [
     path('cart/remove/<slug:slug>', RemoveToCartView.as_view(), name='cart_remove'),
 
     path('order/create/', OrderCreateView.as_view(), name='order_create'),
-    path('order/confirmation/<int:order_id>/', OrderConfirmationView.as_view(), name='order_cofirmation'),
+    path('order/confirmation/<int:order_id>/', OrderConfirmationView.as_view(), name='order_confirmation'),
 
     path('alert/add/<slug:slug>', AddAlertView.as_view(), name='make_alert'),
-    
+        
     path('manager/', ManagerDashboardView.as_view(), name='manager_dashboard'),
 
     path('manager/orders/', ManagerOrdersView.as_view(), name='manager_orders'),

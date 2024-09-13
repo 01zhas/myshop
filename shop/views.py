@@ -141,6 +141,7 @@ class ProductListView(ListView):
     model = Product
     template_name = 'shop/product/list.html'
     context_object_name = 'products'
+    paginate_by = 3
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -230,7 +231,6 @@ class PaymentView(LoginRequiredMixin, FormView):
         
         order_id = self.kwargs.get("order_id")
         order = get_object_or_404(Order, id = order_id, user = self.request.user)
-
         context['order'] = order
         context['total_price'] = order.total_price
 
@@ -250,7 +250,7 @@ class PaymentView(LoginRequiredMixin, FormView):
         if result['status'] == 'success':
             order.payment_status = True
             order.save()
-            return redirect('order_confirmation', order_id= order.id)
+            return redirect('order_confirmation', order_id=order.id)
 
         context = self.get_context_data(result = result)
         return self.render_to_response(context)
