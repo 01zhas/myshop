@@ -39,6 +39,9 @@
                         <li class="nav-item">
                             <button class="nav-link btn btn-link" onclick="window.location.href='{% url 'cart' %}'">Корзина</button>
                         </li>
+                        <li class="nav-item"></li>
+                            <button class="nav-link btn btn-link" onclick="window.location.href='{% url 'user_orders' %}'">Мой заказы</button>
+                        </li>
                         <li class="nav-item">
                             <form action="{% url 'logout' %}" method="post" style="display:inline;">
                                 {% csrf_token %}

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from .views import ManagerProductsAddView, ManagerProductsUpdateView, OrderConfirmationView, PaymentView, ProductListView, ProductDetailView, SignUp, CustomLoginView, CustomLogoutView, CartDetailView, AddToCartView, RemoveToCartView, OrderCreateView, AddAlertView, ManagerDashboardView, ManagerOrdersView, ManagerProductsView, ManagerOrdersUpdateView, ManagerProductsDeleteView
-from .views import gmail_mail
+from .views import UserOrdersView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -22,7 +22,7 @@ urlpatterns = [
     path('order/confirmation/<int:order_id>/', OrderConfirmationView.as_view(), name='order_confirmation'),
 
     path('alert/add/<slug:slug>', AddAlertView.as_view(), name='make_alert'),
-        
+
     path('manager/', ManagerDashboardView.as_view(), name='manager_dashboard'),
 
     path('manager/orders/', ManagerOrdersView.as_view(), name='manager_orders'),
@@ -33,7 +33,9 @@ urlpatterns = [
     path('manager/product/add/', ManagerProductsAddView.as_view(), name='add_product'),
     path('manager/product/delete/<slug:slug>', ManagerProductsDeleteView.as_view(), name='delete_product'),
 
-    path('payment/<int:order_id>', PaymentView.as_view(), name = 'payment')
+    path('payment/<int:order_id>', PaymentView.as_view(), name = 'payment'),
+    path('my-orders/', UserOrdersView.as_view(), name='user_orders')
+
 ]
 
 if settings.DEBUG:

@@ -42,12 +42,13 @@ class ManagerOrdersView(ManagerMixin, ListView):
     template_name = 'manager/orders.html'
     context_object_name = 'orders'
     ordering = ['-created_at']
-
+    paginate_by = 10 
 class ManagerProductsView(ManagerMixin, ListView):
     model = Product
     template_name = 'manager/products.html'
     context_object_name = 'products'
     ordering = ['-created_at']
+    paginate_by = 10 
 
 class ManagerProductsUpdateView(ManagerMixin, UpdateView):
     model = Product
@@ -141,13 +142,13 @@ class ProductListView(ListView):
     model = Product
     template_name = 'shop/product/list.html'
     context_object_name = 'products'
-    paginate_by = 3
+    paginate_by = 3  # количество товаров на одной странице
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        categoty_slug = self.kwargs.get("category_slug")
-        if categoty_slug:
-            category = get_object_or_404(Category, slug = categoty_slug)
+        category_slug = self.kwargs.get("category_slug")
+        if category_slug:
+            category = get_object_or_404(Category, slug=category_slug)
             queryset = queryset.filter(category=category)
         return queryset
     
@@ -254,3 +255,12 @@ class PaymentView(LoginRequiredMixin, FormView):
 
         context = self.get_context_data(result = result)
         return self.render_to_response(context)
+    
+class UserOrdersView(LoginRequiredMixin, ListView):
+    model = Order
+    template_name = 'order/user_orders.html'
+    context_object_name = 'orders'
+    paginate_by = 5
+    
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).order_by('-created_at')

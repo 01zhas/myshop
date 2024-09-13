@@ -1,0 +1,76 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+    <h2>Мои заказы</h2>
+
+    {% if orders %}
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Заказы</h2>
+    
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Клиент</th>
+                    <th scope="col">Итоговая сумма</th>
+                    <th scope="col">Адрес</th>
+                    <th scope="col">Статус</th>
+                    <th scope="col">Дата создания</th>
+                    <th scope="col">Статус оплаты</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td><a href="{% url 'update_order' order.pk %}">{{ order.pk }}</a></td>
+                        <td>{{ order.user.username }}</td>
+                        <td>{{ order.total_price }} тенге</td>
+                        <td>{{ order.address }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>{{ order.created_at|date:"d M Y, H:i" }}</td>
+                        <td>
+                            {% if not order.payment_status %}
+                                <a href="{% url 'payment' order.pk %}" class="btn btn-warning">Оплатить</a>
+                            {% else %}
+                                <button class="btn btn-success" disabled>Оплачено</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="pagination justify-content-center mt-5">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&lsaquo;</a>
+                    </li>
+                {% endif %}
+        
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num > page_obj.number|add:-2 and num < page_obj.number|add:2 %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+        
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">&rsaquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% else %}
+        <p>У вас пока нет заказов.</p>
+    {% endif %}
+{% endblock %}
