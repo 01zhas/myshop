@@ -200,3 +200,19 @@ class АvailabilityAlert(models.Model):
 
     def __str__(self):
         return f'{self.user} {self.product}'
+    
+class Message(models.Model):
+    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
+    room_name = models.CharField(max_length=255)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Сообщение"
+        verbose_name_plural = "Cooбщения"
+
+    def __str__(self):
+        return self.sender
+
+    def get_absolute_url(self):
+        return reverse("Message_detail", kwargs={"pk": self.pk})
