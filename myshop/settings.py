@@ -42,9 +42,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-
-
     'shop',
+    'channels',
 ]
 
 AUTHENTICATION_BACKENDS = [
