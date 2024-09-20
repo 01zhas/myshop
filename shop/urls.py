@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import ManagerProductsAddView, ManagerProductsUpdateView, OrderConfirmationView, PaymentView, ProductListView, ProductDetailView, SignUp, CustomLoginView, CustomLogoutView, CartDetailView, AddToCartView, RemoveToCartView, OrderCreateView, AddAlertView, ManagerDashboardView, ManagerOrdersView, ManagerProductsView, ManagerOrdersUpdateView, ManagerProductsDeleteView
 from .views import UserOrdersView
+from .views import UserChat, ManagerChat, ManagerChatList
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -24,7 +25,6 @@ urlpatterns = [
     path('alert/add/<slug:slug>', AddAlertView.as_view(), name='make_alert'),
 
     path('manager/', ManagerDashboardView.as_view(), name='manager_dashboard'),
-
     path('manager/orders/', ManagerOrdersView.as_view(), name='manager_orders'),
     path('manager/order/<int:pk>', ManagerOrdersUpdateView.as_view(), name='update_order'),
 
@@ -34,8 +34,11 @@ urlpatterns = [
     path('manager/product/delete/<slug:slug>', ManagerProductsDeleteView.as_view(), name='delete_product'),
 
     path('payment/<int:order_id>', PaymentView.as_view(), name = 'payment'),
-    path('my-orders/', UserOrdersView.as_view(), name='user_orders')
+    path('my-orders/', UserOrdersView.as_view(), name='user_orders'),
 
+    path('chat/', UserChat.as_view(), name = 'user_chat'),
+    path('chat/manage/<str:room_name>/', ManagerChat.as_view(), name='manager_chat'),
+    path('chat/manage/', ManagerChatList.as_view(), name='manager_chat_list')
 ]
 
 if settings.DEBUG:

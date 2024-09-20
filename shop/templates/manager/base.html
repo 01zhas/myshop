@@ -20,6 +20,7 @@
                 <a class="nav-link" href="{% url 'manager_products' %}">Товары</a>
                 <a class="nav-link" href="{% url 'manager_orders' %}">Заказы</a>
                 <a class="nav-link" href="{% url 'manager_dashboard' %}">Статистика сайта</a>
+                <a class="nav-link" href="{% url 'manager_chat_list' %}">Список чатов</a>
                 <a class="nav-link" href="{% url 'product_list' %}">Вернуться на сайт</a>
                 <form action="{% url 'logout' %}" method="post" style="display:inline;" class="d-inline">
                     {% csrf_token %}

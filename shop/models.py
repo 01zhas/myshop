@@ -201,7 +201,7 @@ class АvailabilityAlert(models.Model):
     def __str__(self):
         return f'{self.user} {self.product}'
     
-class Message(models.Model):
+class MessageModel(models.Model):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
     room_name = models.CharField(max_length=255)
     content = models.TextField()

@@ -1,0 +1,16 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Список чатов{% endblock %}
+
+{% block content %}
+<h2>Список чатов</h2>
+<ul class="list-group">
+    {% for room in rooms %}
+        <li class="list-group-item">
+            <a href="{% url 'manager_chat' room.room_name %}">{{ room.room_name }}</a>
+        </li>
+    {% empty %}
+        <li class="list-group-item">Нет доступных чатов.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,9 +1,10 @@
+from mailbox import Message
 from typing import Any
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from .models import CartItem, Category, Order, OrderItem, Product, Cart, АvailabilityAlert
+from .models import CartItem, Category, Order, OrderItem, Product, Cart, АvailabilityAlert, MessageModel
 from django.views.generic import ListView, DetailView, FormView, TemplateView, UpdateView, CreateView, DeleteView
 from .forms import OrderForm, UserRegistrationForm, PaymentForm
 from django.contrib.auth import login
@@ -13,7 +14,7 @@ from django.views import View
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-
+from django.db.models import F
 from .fake_payment_system import FakePaymentSystem
 from .payment_gateaway import PaymentSystem
 
@@ -107,7 +108,7 @@ class RemoveToCartView(LoginRequiredMixin, View):
         cart_item = get_object_or_404(CartItem, cart=cart, product=product)
         if cart_item.quantity > 1:
             cart_item.quantity -= 1
-            cart_item.save()  # Сохраните изменения в базе данных
+            cart_item.save()  
         else:
             cart_item.delete()
         return redirect('cart')
@@ -142,7 +143,7 @@ class ProductListView(ListView):
     model = Product
     template_name = 'shop/product/list.html'
     context_object_name = 'products'
-    paginate_by = 3  # количество товаров на одной странице
+    paginate_by = 3  
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -265,3 +266,36 @@ class UserOrdersView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user).order_by('-created_at')
     
+class UserChat(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        room_name = f'user_{request.user.id}'
+        messages = MessageModel.objects.filter(room_name=room_name).order_by('-timestamp') 
+        return render(request, 'chat/room.html', {
+            'room_name': room_name,
+            'messages': messages,
+            'username': request.user.username
+
+        })
+
+class ManagerChat(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        if request.user.groups.filter(name="Менеджеры").exists():
+            room_name = kwargs['room_name']
+            messages = MessageModel.objects.filter(room_name=room_name).order_by('-timestamp')  
+            return render(request, 'chat/room.html', {
+                'room_name': room_name,
+                'messages': messages,
+                'username': request.user.username
+            })
+        else:
+            return redirect('home')
+
+class ManagerChatList(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        if request.user.groups.filter(name="Менеджеры").exists():
+            rooms = MessageModel.objects.values('room_name').distinct()
+            return render(request, 'chat/manager_chat_list.html', {
+                'rooms' : rooms
+            })
+        else:
+            return redirect('home')

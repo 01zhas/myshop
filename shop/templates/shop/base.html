@@ -11,9 +11,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link
     rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-  />
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js" integrity="sha512-Eak/29OTpb36LLo2r47IpVzPBLXnAMPAVypbSZiZ4Qkf8p/7S/XRG5xp7OKWPPYfJT6metI+IORkR5G8F900+g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    {% block scripts %}
+    {% endblock%}
 </head>
 <body>
     <header>
@@ -42,6 +43,9 @@
                         <li class="nav-item"></li>
                             <button class="nav-link btn btn-link" onclick="window.location.href='{% url 'user_orders' %}'">Мой заказы</button>
                         </li>
+                        <li class="nav-item"></li>
+                            <button class="nav-link btn btn-link" onclick="window.location.href='{% url 'user_chat' %}'">Чат поддержки</button>
+                        </li>
                         <li class="nav-item">
                             <form action="{% url 'logout' %}" method="post" style="display:inline;">
                                 {% csrf_token %}
@@ -68,5 +72,6 @@
         {% block content %}
         {% endblock%}
     </div>
+
 </body>
 </html>
