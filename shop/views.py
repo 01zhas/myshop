@@ -4,6 +4,8 @@ from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+
+from shop.serializers import CartItemSerializer, CartSerializer, OrderItemSerializer, OrderSerializer, ProductSerializer, UserSerializer
 from .models import CartItem, Category, Order, OrderItem, Product, Cart, АvailabilityAlert, MessageModel
 from django.views.generic import ListView, DetailView, FormView, TemplateView, UpdateView, CreateView, DeleteView
 from .forms import OrderForm, UserRegistrationForm, PaymentForm
@@ -17,6 +19,7 @@ from django.core.mail import send_mail
 from django.db.models import F
 from .fake_payment_system import FakePaymentSystem
 from .payment_gateaway import PaymentSystem
+from rest_framework import viewsets
 
 def gmail_mail(request):
     return HttpResponse("Вы отправили email")
@@ -299,3 +302,28 @@ class ManagerChatList(LoginRequiredMixin, View):
             })
         else:
             return redirect('home')
+        
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+class CartViewSet(viewsets.ModelViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+
+class CartItemViewSet(viewsets.ModelViewSet):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+class OrderItemViewSet(viewsets.ModelViewSet):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemSerializer

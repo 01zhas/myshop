@@ -1,10 +1,20 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import ManagerProductsAddView, ManagerProductsUpdateView, OrderConfirmationView, PaymentView, ProductListView, ProductDetailView, SignUp, CustomLoginView, CustomLogoutView, CartDetailView, AddToCartView, RemoveToCartView, OrderCreateView, AddAlertView, ManagerDashboardView, ManagerOrdersView, ManagerProductsView, ManagerOrdersUpdateView, ManagerProductsDeleteView
+from .views import CartItemViewSet, CartViewSet, ManagerProductsAddView, ManagerProductsUpdateView, OrderConfirmationView, OrderItemViewSet, OrderViewSet, PaymentView, ProductListView, ProductDetailView, ProductViewSet, SignUp, CustomLoginView, CustomLogoutView, CartDetailView, AddToCartView, RemoveToCartView, OrderCreateView, AddAlertView, ManagerDashboardView, ManagerOrdersView, ManagerProductsView, ManagerOrdersUpdateView, ManagerProductsDeleteView, UserViewSet
 from .views import UserOrdersView
 from .views import UserChat, ManagerChat, ManagerChatList
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'api/users', UserViewSet)
+router.register(r'api/products', ProductViewSet)
+router.register(r'api/carts', CartViewSet)
+router.register(r'api/cartitems', CartItemViewSet)
+router.register(r'api/orders', OrderViewSet)
+router.register(r'api/users', OrderItemViewSet)
+urlpatterns = router.urls
 
 urlpatterns = [
     path('', ProductListView.as_view(), name="product_list"),
@@ -39,7 +49,7 @@ urlpatterns = [
     path('chat/', UserChat.as_view(), name = 'user_chat'),
     path('chat/manage/<str:room_name>/', ManagerChat.as_view(), name='manager_chat'),
     path('chat/manage/', ManagerChatList.as_view(), name='manager_chat_list')
-]
+] + router.urls
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

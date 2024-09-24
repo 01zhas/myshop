@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'shop',
     'channels',
+    'rest_framework'
 ]
 
 CHANNEL_LAYERS = {
