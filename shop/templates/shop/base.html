@@ -15,6 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js" integrity="sha512-Eak/29OTpb36LLo2r47IpVzPBLXnAMPAVypbSZiZ4Qkf8p/7S/XRG5xp7OKWPPYfJT6metI+IORkR5G8F900+g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     {% block scripts %}
     {% endblock%}
+
 </head>
 <body>
     <header>
@@ -73,5 +74,18 @@
         {% endblock%}
     </div>
 
+    <script>
+        const userId = {{ user.id }}; 
+        const socket = new WebSocket(`ws://${window.location.host}/ws/notifications/`);
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            alert(data.message); 
+        };
+
+        socket.onclose = function(event) {
+            console.error('WebSocket закрыт не по желанию клиента');
+        };
+    </script>
 </body>
 </html>

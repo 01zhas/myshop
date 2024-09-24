@@ -3,6 +3,8 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from .models import Cart, Product, АvailabilityAlert
 from django.core.mail import send_mail
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 @receiver(post_save, sender=User)
 def create_user_cart(sender, instance, created, **kwargs):
@@ -28,5 +30,15 @@ def availability_alert(sender, instance, **kwargs):
                     [alert.user.email],
                     fail_silently=False,
                 )
+
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f"user_{alert.user.id}", 
+                    {
+                        'type': 'availability_notification',
+                        'message': f"{alert.product.name} теперь доступен!",
+                    }
+                )
+
                 alert.delete()
             
