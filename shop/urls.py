@@ -6,14 +6,18 @@ from .views import UserChat, ManagerChat, ManagerChatList
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.reverse import reverse
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 router = routers.DefaultRouter()
-router.register(r'api/users', UserViewSet)
-router.register(r'api/products', ProductViewSet)
-router.register(r'api/carts', CartViewSet)
-router.register(r'api/cartitems', CartItemViewSet)
-router.register(r'api/orders', OrderViewSet)
-router.register(r'api/users', OrderItemViewSet)
+router.register(r'users', UserViewSet)
+router.register(r'products', ProductViewSet)
+router.register(r'orders', OrderViewSet)
 urlpatterns = router.urls
 
 urlpatterns = [
@@ -48,8 +52,13 @@ urlpatterns = [
 
     path('chat/', UserChat.as_view(), name = 'user_chat'),
     path('chat/manage/<str:room_name>/', ManagerChat.as_view(), name='manager_chat'),
-    path('chat/manage/', ManagerChatList.as_view(), name='manager_chat_list')
-] + router.urls
+    path('chat/manage/', ManagerChatList.as_view(), name='manager_chat_list'),
+
+    path('api/', include(router.urls)),
+
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+] 
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
