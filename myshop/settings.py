@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-8si8k5nv!e7x@egh*+zf*7*%r98*bw9zc9m#8izx4qaoo)(%)9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['35.203.1.19', 'itstepshop.store']
 
 
 # Application definition
@@ -106,8 +106,12 @@ ASGI_APPLICATION = "myshop.asgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydb',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -147,6 +151,7 @@ AUTH_USER_MODEL = 'auth.User'
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
