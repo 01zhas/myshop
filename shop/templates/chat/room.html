@@ -22,7 +22,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const roomName = "{{ room_name }}";
         const chatSocket = new WebSocket(
-            'ws://' + window.location.host + '/ws/chat/user/' + roomName + '/'
+            'wss://' + window.location.host + '/ws/chat/user/' + roomName + '/'
         );
 
         chatSocket.onmessage = function(e) {
